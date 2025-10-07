@@ -57,8 +57,8 @@ static Clr *scheme[SchemeLast];
 
 static int (*fstrncmp)(const char *, const char *, size_t) = strncmp;
 static char *(*fstrstr)(const char *, const char *) = strstr;
-
 static unsigned int
+
 textw_clamp(const char *str, unsigned int n)
 {
 	unsigned int w = drw_fontset_getwidth_clamp(drw, str, n) + lrpad;
@@ -747,6 +747,10 @@ usage(void)
 int
 main(int argc, char *argv[])
 {
+	//To set -i (case insensitive) as default, the following 2 lines a included:
+	fstrncmp = strncasecmp;
+	fstrstr  = cistrstr;
+	
 	XWindowAttributes wa;
 	int i, fast = 0;
 
