@@ -476,13 +476,32 @@ insert:
 		if (lines > 0)
 			return;
 		/* fallthrough */
+	/* Up: move up, wrap to last item with proper page positioning */
 	case XK_Up:
 	case XK_KP_Up:
-		if (sel && sel->left && (sel = sel->left)->right == curr) {
-			curr = prev;
-			calcoffsets();
-		}
-		break;
+		if (sel && sel->left) {
+        		sel = sel->left;
+        		if (sel->right == curr) {
+            			curr = prev;
+            			calcoffsets();
+        		}
+    		} else {
+        		/* wrap to last item */
+        		sel = matchend;
+        		if (sel) {
+            			curr = sel;
+            			while (curr->left && curr->left->right != NULL)
+                			curr = curr->left;
+            				calcoffsets();
+        		}
+    		}
+    		break;
+		// This following block of code was the original code. Now replaced for cyclic scrolling functionality.
+		//if (sel && sel->left && (sel = sel->left)->right == curr) {
+		//	curr = prev;
+		//	calcoffsets();
+		//}
+		//break;
 	case XK_Next:
 	case XK_KP_Next:
 		if (!next)
@@ -516,13 +535,28 @@ insert:
 		if (lines > 0)
 			return;
 		/* fallthrough */
+	/* Down: move down, wrap to first item preserving page offsets (Home) */
 	case XK_Down:
 	case XK_KP_Down:
-		if (sel && sel->right && (sel = sel->right) == next) {
-			curr = next;
-			calcoffsets();
-		}
-		break;
+		if (sel && sel->right) {
+        		sel = sel->right;
+        		if (sel == next) {
+            			curr = next;
+            			calcoffsets();
+        		}
+    		} else {
+        		/* wrap to first item */
+        		sel = matches;
+        		curr = matches;
+        		calcoffsets();
+    		}
+    		break;
+		// This following block of code was the original code. Now replaced for cyclic scrolling functionality.
+		//dev/if (sel && sel->right && (sel = sel->right) == next) {
+		//	curr = next;
+		//	calcoffsets();
+		//}
+		//break;
 	case XK_Tab:
 		if (!sel)
 			return;
